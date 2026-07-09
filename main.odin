@@ -16,7 +16,27 @@ main :: proc() {
 		panic("error reading file")
 	}
 
-	tokens := lexer.lex(string(data))
+	tokens, lex_err := lexer.lex(string(data))
+	if lex_err != .None {
+		fmt.fprintf(os.stderr, "Lexer error: ")
+		switch lex_err {
+		case .Missing_Paren:
+			fmt.fprintf(os.stderr, "unmatched opening parenthesis\n")
+		case .Missing_Retval:
+			fmt.fprintf(os.stderr, "'return' requires a return value followed by a semicolon\n")
+		case .No_Brace:
+			fmt.fprintf(os.stderr, "unmatched opening brace\n")
+		case .No_Space:
+			fmt.fprintf(os.stderr, "keyword must be followed by whitespace or delimiter\n")
+		case .No_Semicolon:
+			fmt.fprintf(os.stderr, "expected ';' after return statement\n")
+		case .Wrong_Case:
+			fmt.fprintf(os.stderr, "keywords must be lowercase\n")
+		case .None:
+			unreachable()
+		}
+		return
+	}
 	defer delete(tokens)
 
 	for token in tokens {
