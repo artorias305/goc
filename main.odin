@@ -3,6 +3,7 @@ package main
 import "core:fmt"
 import "core:os"
 import "lexer"
+import "parser"
 
 main :: proc() {
 	args := os.args
@@ -39,7 +40,9 @@ main :: proc() {
 	}
 	defer delete(tokens)
 
-	for token in tokens {
-		fmt.println(token)
+	parsed, err_pars := parser.parse(tokens)
+	if err_pars != .None {
+		panic(parser.error_string(err_pars))
 	}
+	fmt.println(parsed)
 }
