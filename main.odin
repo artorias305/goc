@@ -4,6 +4,7 @@ import "core:fmt"
 import "core:os"
 import "lexer"
 import "parser"
+import "generator"
 
 main :: proc() {
 	args := os.args
@@ -40,9 +41,11 @@ main :: proc() {
 	}
 	defer delete(tokens)
 
-	parsed, err_pars := parser.parse(tokens)
+	ast, err_pars := parser.parse(tokens)
 	if err_pars != .None {
 		panic(parser.error_string(err_pars))
 	}
-	fmt.println(parsed)
+	
+	a := generator.generate(ast)
+	fmt.printf("%s", a)
 }
